@@ -117,12 +117,11 @@ jupyter notebook bacth_evaluation.ipynb
 ## 评估指标
 
 系统使用以下指标进行评估：
-- 精确率（Precision）
-- 召回率（Recall）
-- F1分数
-- 答案相关性
-- 上下文利用率
-- 响应时间
+- Context Precision
+- Context Relevancy
+- Answer Accuracy
+- Answer Relevancy
+- Answer Faithfulness
 
 ## 配置参数
 
@@ -137,3 +136,4 @@ jupyter notebook bacth_evaluation.ipynb
 - 水利水电工程施工安全技术规程
 - 水利水电工程危险源辨识与风险评价导则
 - 水利水电工程施工组织设计规范等
+
