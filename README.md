@@ -1,139 +1,145 @@
 # HD-RAG-for-safety-regulation-querying-in-HIS
 
-## 项目简介
+## Project Overview
 
-HD-RAG是一个专为水利水电工程领域设计的分层混合检索增强生成系统，旨在提高安全规程文档的查询准确性和效率。该系统通过分层索引结构和混合检索机制，实现了对水利水电工程安全规程等复杂长文档的高效检索和精确回答。
+HD-RAG is a hierarchical hybrid Retrieval-Augmented Generation (RAG) system specifically designed for the hydropower and water resources engineering domain. It aims to improve the accuracy and efficiency of querying safety regulation documents. By leveraging a hierarchical indexing structure and a hybrid retrieval mechanism, the system enables efficient retrieval and precise answering over complex and lengthy documents such as safety regulations in hydropower engineering.
 
-## 项目结构
+## Project Structure
 
-项目包含五个主要实现版本，用于比较不同检索策略的性能：
+The project includes five main implementation variants for comparing the performance of different retrieval strategies:
 
 ```
 HD-RAG/
-├── HD-RAG/                     # 完整的分层混合RAG系统
-├── HD-RAG without hierarchical index/  # 无分层索引的RAG系统
-├── HD-RAG without hybrid re-ranking/   # 无混合重排序的RAG系统
-├── Keyword-only RAG/           # 仅基于关键词的RAG系统
-├── Vector-only RAG/            # 仅基于向量的RAG系统
-├── data/                       # 数据集目录
-└── requirements.txt            # 项目依赖
+├── HD-RAG/                     # Full hierarchical hybrid RAG system
+├── HD-RAG without hierarchical index/  # RAG system without hierarchical indexing
+├── HD-RAG without hybrid re-ranking/   # RAG system without hybrid re-ranking
+├── Keyword-only RAG/           # Keyword-based RAG system only
+├── Vector-only RAG/            # Vector-based RAG system only
+├── data/                       # Dataset directory
+└── requirements.txt            # Project dependencies
 ```
 
-### 核心模块说明
+### Core Module Description
 
-#### HD-RAG（完整系统）
-- `main.py`: 主程序入口，协调索引构建、检索和生成流程
-- `hierarchical_retrieval.py`: 分层检索算法实现
-- `summary_index.py`: 文档摘要索引构建与管理
-- `detail_index.py`: 文档细节索引构建与管理
-- `response_generation.py`: 基于检索结果生成回答
-- `utils.py`: 工具函数集
+#### HD-RAG（Full System）
+- `main.py`: Main program entry point that coordinates index construction, retrieval, and response generation
+- `hierarchical_retrieval.py`: Implementation of the hierarchical retrieval algorithm
+- `summary_index.py`: Construction and management of the document summary index
+- `detail_index.py`: Construction and management of the document detail index
+- `response_generation.py`: Answer generation based on retrieved results
+- `utils.py`: Utility functions
 
-#### 评估工具
-- `bacth_evaluation.ipynb`: 批量评估脚本
-- `calculate_averages.py`: 计算评估指标平均值
-- `RAGAS.ipynb`: RAGAS评估框架集成
+#### Evaluation Tools
+- `bacth_evaluation.ipynb`: Batch evaluation script
+- `calculate_averages.py`: Computation of average evaluation metrics
+- `RAGAS.ipynb`: Integration of the RAGAS evaluation framework
 
-## 技术栈
+## Technology Stack
 
 - Python 3.10
-- FAISS (向量索引)
-- BM25 (关键词检索)
-- LangChain (RAG框架)
-- OpenAI (生成模型)
-- Pandas (数据处理)
-- NumPy (数值计算)
+- FAISS (vector indexing)
+- BM25 (keyword retrieval)
+- LangChain (RAG framework)
+- OpenAI (generation models)
+- Pandas (data processing)
+- NumPy (numerical computation)
 
-## 安装说明
+## Installation
 
-1. 克隆项目到本地
+1. Clone the project to your local machine
 
-2. 安装依赖包
+2. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-3. 准备数据
-将PDF文档放入`data/`目录下
+3. Prepare the data
+Place the PDF documents in the data/ directory
 
-## 使用方法
+## Usage
 
-### 1. 构建索引
+### 1. Index Construction
 
-在`HD-RAG/`目录下运行：
+Run the following in the HD-RAG/ directory:
 
 ```python
-# 构建索引（默认使用data目录）
+# Build indices (default uses the data directory)
 summary_index, summary_texts, summary_metas, detail_index, detail_texts, detail_metas, bm25_index = build_indices(force_rebuild=False)
 ```
 
-设置`force_rebuild=True`可以强制重建所有索引。
+Set`force_rebuild=True`to forcibly rebuild all indices.
 
-### 2. 运行检索与生成
+### 2. Retrieval and Generation
 
-1. 首先修改`main.py`中的查询CSV文件路径：
+1. First, modify the query CSV file path in `main.py`：
    ```python
-   # 将此行修改为您的CSV文件路径
+   # Modify this line to your CSV file path
    csv_path = r"your csv path"
    ```
 
-2. 然后运行：
+2. Then run：
    ```bash
    python main.py
    ```
 
-CSV文件应包含"Query"列，每行为一个查询问题。
+The CSV file should contain a column named "Query", with each row representing a query question.
 
-### 3. 评估系统性能
+### 3. System Evaluation
 
-使用批量评估脚本：
+Use the batch evaluation script:
 
 ```bash
 jupyter notebook bacth_evaluation.ipynb
 ```
 
-## 系统架构
+## System Architecture
+Hierarchical Index Structure
 
-### 分层索引结构
-1. **摘要索引层**：使用文档摘要构建的向量索引，用于快速定位相关文档段落
-2. **细节索引层**：使用文档全文构建的向量索引和BM25索引，用于精确检索相关信息
+1.Summary Index Layer: A vector index constructed from document summaries, used to quickly locate relevant document sections
+2.Detail Index Layer: A vector index and BM25 index constructed from full document text, used for fine-grained retrieval of relevant information
 
-### 混合检索流程
-1. 首先通过摘要索引快速筛选出候选文档
-2. 然后在候选文档范围内进行细节检索
-3. 使用混合重排序算法（α参数控制向量和关键词权重）
-4. 基于检索结果生成最终回答
+### Hybrid Retrieval Workflow
 
-## 各版本比较
+1.Candidate documents are first selected using the summary index
+2.Detailed retrieval is then performed within the candidate document scope
+3.A hybrid re-ranking algorithm is applied (the parameter α controls the relative weights of vector-based and keyword-based retrieval)
+4.Final answers are generated based on the retrieved results
 
-| 版本 | 分层索引 | 混合重排序 | 检索策略 |
+## Comparison
+
+| Method | Hierarchical Index | Hybrid Re-ranking | Retrieval Strategy |
 |------|----------|------------|----------|
-| HD-RAG | ✅ | ✅ | 分层混合检索 |
-| HD-RAG without hierarchical index | ❌ | ✅ | 单层混合检索 |
-| HD-RAG without hybrid re-ranking | ✅ | ❌ | 分层单模态检索 |
-| Keyword-only RAG | ❌ | ❌ | 仅关键词检索 |
-| Vector-only RAG | ❌ | ❌ | 仅向量检索 |
+| HD-RAG | ✅ | ✅ | Hierarchical hybrid retrieval |
+| HD-RAG without hierarchical index | ❌ | ✅ | Single-layer hybrid retrieval |
+| HD-RAG without hybrid re-ranking | ✅ | ❌ | Hierarchical single-modality retrieval |
+| Keyword-only RAG | ❌ | ❌ | Keyword-only retrieval |
+| Vector-only RAG | ❌ | ❌ | Vector-only retrieval |
 
-## 评估指标
+## Evaluation Metrics
 
-系统使用以下指标进行评估：
+The system is evaluated using the following metrics:
 - Context Precision
 - Context Relevancy
 - Answer Accuracy
 - Answer Relevancy
 - Answer Faithfulness
 
-## 配置参数
+## Configuration Parameters
 
-主要配置参数包括：
-- `k_summary`: 摘要索引检索的文档数量（默认：5）
-- `k_detail`: 细节索引检索的文档数量（默认：5）
-- `alpha`: 向量检索与关键词检索的权重（默认：0.8）
+Key configuration parameters include:
 
-## 数据集
+k_summary: Number of documents retrieved from the summary index (default: 5)
 
-项目使用水利水电工程相关的PDF文档作为数据集，包含：
-- 水利水电工程施工安全技术规程
-- 水利水电工程危险源辨识与风险评价导则
-- 水利水电工程施工组织设计规范等
+k_detail: Number of documents retrieved from the detail index (default: 5)
+
+alpha: Weight between vector-based and keyword-based retrieval (default: 0.8)
+
+## Dataset
+
+The project uses PDF documents related to hydropower and water resources engineering, including:
+
+1.Technical Specifications for Construction Safety of Hydropower and Water Resources Projects
+2.Guidelines for Hazard Identification and Risk Assessment in Hydropower and Water Resources Engineering
+3.Specifications for Construction Organization Design of Hydropower and Water Resources Projects
+
 
