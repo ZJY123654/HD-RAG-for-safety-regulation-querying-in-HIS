@@ -139,7 +139,10 @@ alpha: Weight between vector-based and keyword-based retrieval (default: 0.8)
 The project uses PDF documents related to hydropower and water resources engineering, including:
 
 1.Technical Specifications for Construction Safety of Hydropower and Water Resources Projects
+
 2.Guidelines for Hazard Identification and Risk Assessment in Hydropower and Water Resources Engineering
+
 3.Specifications for Construction Organization Design of Hydropower and Water Resources Projects
+
 
 
